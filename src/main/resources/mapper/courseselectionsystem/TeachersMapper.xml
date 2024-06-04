@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxxy.no1.courseselectionsystem.mapper.TeachersMapper">
+    
+    <resultMap type="Teachers" id="TeachersResult">
+        <result property="teacherId"    column="teacher_id"    />
+        <result property="teacherNumber"    column="teacher_number"    />
+        <result property="teacherName"    column="teacher_name"    />
+        <result property="teacherSex"    column="teacher_sex"    />
+        <result property="teacherEmail"    column="teacher_email"    />
+        <result property="teacherPhone"    column="teacher_phone"    />
+        <result property="teacherTitle"    column="teacher_title"    />
+        <result property="teacherImg"    column="teacher_img"    />
+        <result property="info"    column="info"    />
+        <result property="teacherPassword"    column="teacher_password"    />
+    </resultMap>
+
+    <sql id="selectTeachersVo">
+        select teacher_id, teacher_number, teacher_name, teacher_sex, teacher_email, teacher_phone, teacher_title, teacher_img, info, teacher_password from teachers
+    </sql>
+
+    <select id="selectTeachersList" parameterType="Teachers" resultMap="TeachersResult">
+        <include refid="selectTeachersVo"/>
+        <where>  
+            <if test="teacherNumber != null  and teacherNumber != ''"> and teacher_number = #{teacherNumber}</if>
+            <if test="teacherName != null  and teacherName != ''"> and teacher_name like concat('%', #{teacherName}, '%')</if>
+            <if test="teacherSex != null  and teacherSex != ''"> and teacher_sex = #{teacherSex}</if>
+            <if test="teacherEmail != null  and teacherEmail != ''"> and teacher_email = #{teacherEmail}</if>
+            <if test="teacherPhone != null  and teacherPhone != ''"> and teacher_phone = #{teacherPhone}</if>
+            <if test="teacherTitle != null  and teacherTitle != ''"> and teacher_title = #{teacherTitle}</if>
+            <if test="teacherImg != null  and teacherImg != ''"> and teacher_img = #{teacherImg}</if>
+            <if test="info != null  and info != ''"> and info = #{info}</if>
+            <if test="teacherPassword != null  and teacherPassword != ''"> and teacher_password = #{teacherPassword}</if>
+        </where>
+    </select>
+    
+    <select id="selectTeachersByTeacherId" parameterType="Integer" resultMap="TeachersResult">
+        <include refid="selectTeachersVo"/>
+        where teacher_id = #{teacherId}
+    </select>
+        
+    <insert id="insertTeachers" parameterType="Teachers" useGeneratedKeys="true" keyProperty="teacherId">
+        insert into teachers
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="teacherNumber != null">teacher_number,</if>
+            <if test="teacherName != null">teacher_name,</if>
+            <if test="teacherSex != null">teacher_sex,</if>
+            <if test="teacherEmail != null">teacher_email,</if>
+            <if test="teacherPhone != null">teacher_phone,</if>
+            <if test="teacherTitle != null">teacher_title,</if>
+            <if test="teacherImg != null">teacher_img,</if>
+            <if test="info != null">info,</if>
+            <if test="teacherPassword != null">teacher_password,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="teacherNumber != null">#{teacherNumber},</if>
+            <if test="teacherName != null">#{teacherName},</if>
+            <if test="teacherSex != null">#{teacherSex},</if>
+            <if test="teacherEmail != null">#{teacherEmail},</if>
+            <if test="teacherPhone != null">#{teacherPhone},</if>
+            <if test="teacherTitle != null">#{teacherTitle},</if>
+            <if test="teacherImg != null">#{teacherImg},</if>
+            <if test="info != null">#{info},</if>
+            <if test="teacherPassword != null">#{teacherPassword},</if>
+         </trim>
+    </insert>
+
+    <update id="updateTeachers" parameterType="Teachers">
+        update teachers
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="teacherNumber != null">teacher_number = #{teacherNumber},</if>
+            <if test="teacherName != null">teacher_name = #{teacherName},</if>
+            <if test="teacherSex != null">teacher_sex = #{teacherSex},</if>
+            <if test="teacherEmail != null">teacher_email = #{teacherEmail},</if>
+            <if test="teacherPhone != null">teacher_phone = #{teacherPhone},</if>
+            <if test="teacherTitle != null">teacher_title = #{teacherTitle},</if>
+            <if test="teacherImg != null">teacher_img = #{teacherImg},</if>
+            <if test="info != null">info = #{info},</if>
+            <if test="teacherPassword != null">teacher_password = #{teacherPassword},</if>
+        </trim>
+        where teacher_id = #{teacherId}
+    </update>
+
+    <delete id="deleteTeachersByTeacherId" parameterType="Integer">
+        delete from teachers where teacher_id = #{teacherId}
+    </delete>
+
+    <delete id="deleteTeachersByTeacherIds" parameterType="String">
+        delete from teachers where teacher_id in 
+        <foreach item="teacherId" collection="array" open="(" separator="," close=")">
+            #{teacherId}
+        </foreach>
+    </delete>
+
+
+    <select id="selectTeachersByTeacherNumber" parameterType="string" resultType="teachers">
+        select *from teachers where teacher_number=#{teacherNumber}
+    </select>
+
+
+
+
+
+
+</mapper>

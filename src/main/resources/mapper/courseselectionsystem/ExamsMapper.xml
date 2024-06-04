@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxxy.no1.courseselectionsystem.mapper.ExamsMapper">
+    
+    <resultMap type="Exams" id="ExamsResult">
+        <result property="examId"    column="exam_id"    />
+        <result property="courseId"    column="course_id"    />
+        <result property="examName"    column="exam_name"    />
+        <result property="examDate"    column="exam_date"    />
+        <result property="examStartTime"    column="exam_start_time"    />
+        <result property="examEndTime"    column="exam_end_time"    />
+    </resultMap>
+
+    <sql id="selectExamsVo">
+        select exam_id, course_id, exam_name, exam_date, exam_start_time, exam_end_time from exams
+    </sql>
+
+    <select id="selectExamsList" parameterType="Exams" resultMap="ExamsResult">
+        <include refid="selectExamsVo"/>
+        <where>  
+            <if test="courseId != null "> and course_id = #{courseId}</if>
+            <if test="examName != null  and examName != ''"> and exam_name like concat('%', #{examName}, '%')</if>
+            <if test="examDate != null "> and exam_date = #{examDate}</if>
+            <if test="examStartTime != null "> and exam_start_time = #{examStartTime}</if>
+            <if test="examEndTime != null "> and exam_end_time = #{examEndTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectExamsByExamId" parameterType="Integer" resultMap="ExamsResult">
+        <include refid="selectExamsVo"/>
+        where exam_id = #{examId}
+    </select>
+        
+    <insert id="insertExams" parameterType="Exams" useGeneratedKeys="true" keyProperty="examId">
+        insert into exams
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="courseId != null">course_id,</if>
+            <if test="examName != null">exam_name,</if>
+            <if test="examDate != null">exam_date,</if>
+            <if test="examStartTime != null">exam_start_time,</if>
+            <if test="examEndTime != null">exam_end_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="courseId != null">#{courseId},</if>
+            <if test="examName != null">#{examName},</if>
+            <if test="examDate != null">#{examDate},</if>
+            <if test="examStartTime != null">#{examStartTime},</if>
+            <if test="examEndTime != null">#{examEndTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateExams" parameterType="Exams">
+        update exams
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="courseId != null">course_id = #{courseId},</if>
+            <if test="examName != null">exam_name = #{examName},</if>
+            <if test="examDate != null">exam_date = #{examDate},</if>
+            <if test="examStartTime != null">exam_start_time = #{examStartTime},</if>
+            <if test="examEndTime != null">exam_end_time = #{examEndTime},</if>
+        </trim>
+        where exam_id = #{examId}
+    </update>
+
+    <delete id="deleteExamsByExamId" parameterType="Integer">
+        delete from exams where exam_id = #{examId}
+    </delete>
+
+    <delete id="deleteExamsByExamIds" parameterType="String">
+        delete from exams where exam_id in 
+        <foreach item="examId" collection="array" open="(" separator="," close=")">
+            #{examId}
+        </foreach>
+    </delete>
+</mapper>

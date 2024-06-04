@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxxy.no1.courseselectionsystem.mapper.CoursetypesMapper">
+    
+    <resultMap type="Coursetypes" id="CoursetypesResult">
+        <result property="coursetypesId"    column="coursetypes_id"    />
+        <result property="coursetypesName"    column="coursetypes_name"    />
+        <result property="collegeId"    column="college_id"    />
+    </resultMap>
+
+    <sql id="selectCoursetypesVo">
+        select coursetypes_id, coursetypes_name, college_id from coursetypes
+    </sql>
+
+    <select id="selectCoursetypesList" parameterType="Coursetypes" resultMap="CoursetypesResult">
+        <include refid="selectCoursetypesVo"/>
+        <where>  
+            <if test="coursetypesName != null  and coursetypesName != ''"> and coursetypes_name like concat('%', #{coursetypesName}, '%')</if>
+            <if test="collegeId != null "> and college_id = #{collegeId}</if>
+        </where>
+    </select>
+    
+    <select id="selectCoursetypesByCoursetypesId" parameterType="Integer" resultMap="CoursetypesResult">
+        <include refid="selectCoursetypesVo"/>
+        where coursetypes_id = #{coursetypesId}
+    </select>
+        
+    <insert id="insertCoursetypes" parameterType="Coursetypes" useGeneratedKeys="true" keyProperty="coursetypesId">
+        insert into coursetypes
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="coursetypesName != null">coursetypes_name,</if>
+            <if test="collegeId != null">college_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="coursetypesName != null">#{coursetypesName},</if>
+            <if test="collegeId != null">#{collegeId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCoursetypes" parameterType="Coursetypes">
+        update coursetypes
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="coursetypesName != null">coursetypes_name = #{coursetypesName},</if>
+            <if test="collegeId != null">college_id = #{collegeId},</if>
+        </trim>
+        where coursetypes_id = #{coursetypesId}
+    </update>
+
+    <delete id="deleteCoursetypesByCoursetypesId" parameterType="Integer">
+        delete from coursetypes where coursetypes_id = #{coursetypesId}
+    </delete>
+
+    <delete id="deleteCoursetypesByCoursetypesIds" parameterType="String">
+        delete from coursetypes where coursetypes_id in 
+        <foreach item="coursetypesId" collection="array" open="(" separator="," close=")">
+            #{coursetypesId}
+        </foreach>
+    </delete>
+</mapper>

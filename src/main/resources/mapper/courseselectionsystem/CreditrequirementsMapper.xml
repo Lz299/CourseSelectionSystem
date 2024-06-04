@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxxy.no1.courseselectionsystem.mapper.CreditrequirementsMapper">
+    
+    <resultMap type="Creditrequirements" id="CreditrequirementsResult">
+        <result property="creditrequirementId"    column="creditrequirement_id"    />
+        <result property="collegeId"    column="college_id"    />
+        <result property="coursetypesId"    column="coursetypes_id"    />
+        <result property="creditrequirementCredits"    column="creditrequirement_credits"    />
+    </resultMap>
+
+    <sql id="selectCreditrequirementsVo">
+        select creditrequirement_id, college_id, coursetypes_id, creditrequirement_credits from creditrequirements
+    </sql>
+
+    <select id="selectCreditrequirementsList" parameterType="Creditrequirements" resultMap="CreditrequirementsResult">
+        <include refid="selectCreditrequirementsVo"/>
+        <where>  
+            <if test="collegeId != null "> and college_id = #{collegeId}</if>
+            <if test="coursetypesId != null "> and coursetypes_id = #{coursetypesId}</if>
+            <if test="creditrequirementCredits != null "> and creditrequirement_credits = #{creditrequirementCredits}</if>
+        </where>
+    </select>
+    
+    <select id="selectCreditrequirementsByCreditrequirementId" parameterType="Integer" resultMap="CreditrequirementsResult">
+        <include refid="selectCreditrequirementsVo"/>
+        where creditrequirement_id = #{creditrequirementId}
+    </select>
+        
+    <insert id="insertCreditrequirements" parameterType="Creditrequirements" useGeneratedKeys="true" keyProperty="creditrequirementId">
+        insert into creditrequirements
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="collegeId != null">college_id,</if>
+            <if test="coursetypesId != null">coursetypes_id,</if>
+            <if test="creditrequirementCredits != null">creditrequirement_credits,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="collegeId != null">#{collegeId},</if>
+            <if test="coursetypesId != null">#{coursetypesId},</if>
+            <if test="creditrequirementCredits != null">#{creditrequirementCredits},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCreditrequirements" parameterType="Creditrequirements">
+        update creditrequirements
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="collegeId != null">college_id = #{collegeId},</if>
+            <if test="coursetypesId != null">coursetypes_id = #{coursetypesId},</if>
+            <if test="creditrequirementCredits != null">creditrequirement_credits = #{creditrequirementCredits},</if>
+        </trim>
+        where creditrequirement_id = #{creditrequirementId}
+    </update>
+
+    <delete id="deleteCreditrequirementsByCreditrequirementId" parameterType="Integer">
+        delete from creditrequirements where creditrequirement_id = #{creditrequirementId}
+    </delete>
+
+    <delete id="deleteCreditrequirementsByCreditrequirementIds" parameterType="String">
+        delete from creditrequirements where creditrequirement_id in 
+        <foreach item="creditrequirementId" collection="array" open="(" separator="," close=")">
+            #{creditrequirementId}
+        </foreach>
+    </delete>
+</mapper>

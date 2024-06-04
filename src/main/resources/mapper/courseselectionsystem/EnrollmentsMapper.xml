@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxxy.no1.courseselectionsystem.mapper.EnrollmentsMapper">
+    
+    <resultMap type="Enrollments" id="EnrollmentsResult">
+        <result property="enrollmentId"    column="enrollment_id"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="courseId"    column="course_id"    />
+        <result property="semesterId"    column="semester_id"    />
+        <result property="enrollmentStatus"    column="enrollment_status"    />
+        <result property="enrollmentDate"    column="enrollment_date"    />
+    </resultMap>
+
+    <sql id="selectEnrollmentsVo">
+        select enrollment_id, student_id, course_id, semester_id, enrollment_status, enrollment_date from enrollments
+    </sql>
+
+    <select id="selectEnrollmentsList" parameterType="Enrollments" resultMap="EnrollmentsResult">
+        <include refid="selectEnrollmentsVo"/>
+        <where>  
+            <if test="studentId != null "> and student_id = #{studentId}</if>
+            <if test="courseId != null "> and course_id = #{courseId}</if>
+            <if test="semesterId != null "> and semester_id = #{semesterId}</if>
+            <if test="enrollmentStatus != null  and enrollmentStatus != ''"> and enrollment_status = #{enrollmentStatus}</if>
+            <if test="enrollmentDate != null "> and enrollment_date = #{enrollmentDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectEnrollmentsByEnrollmentId" parameterType="Integer" resultMap="EnrollmentsResult">
+        <include refid="selectEnrollmentsVo"/>
+        where enrollment_id = #{enrollmentId}
+    </select>
+        
+    <insert id="insertEnrollments" parameterType="Enrollments" useGeneratedKeys="true" keyProperty="enrollmentId">
+        insert into enrollments
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">student_id,</if>
+            <if test="courseId != null">course_id,</if>
+            <if test="semesterId != null">semester_id,</if>
+            <if test="enrollmentStatus != null">enrollment_status,</if>
+            <if test="enrollmentDate != null">enrollment_date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">#{studentId},</if>
+            <if test="courseId != null">#{courseId},</if>
+            <if test="semesterId != null">#{semesterId},</if>
+            <if test="enrollmentStatus != null">#{enrollmentStatus},</if>
+            <if test="enrollmentDate != null">#{enrollmentDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateEnrollments" parameterType="Enrollments">
+        update enrollments
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentId != null">student_id = #{studentId},</if>
+            <if test="courseId != null">course_id = #{courseId},</if>
+            <if test="semesterId != null">semester_id = #{semesterId},</if>
+            <if test="enrollmentStatus != null">enrollment_status = #{enrollmentStatus},</if>
+            <if test="enrollmentDate != null">enrollment_date = #{enrollmentDate},</if>
+        </trim>
+        where enrollment_id = #{enrollmentId}
+    </update>
+
+    <delete id="deleteEnrollmentsByEnrollmentId" parameterType="Integer">
+        delete from enrollments where enrollment_id = #{enrollmentId}
+    </delete>
+
+    <delete id="deleteEnrollmentsByEnrollmentIds" parameterType="String">
+        delete from enrollments where enrollment_id in 
+        <foreach item="enrollmentId" collection="array" open="(" separator="," close=")">
+            #{enrollmentId}
+        </foreach>
+    </delete>
+</mapper>

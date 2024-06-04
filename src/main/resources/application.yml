@@ -1,0 +1,33 @@
+spring:
+  config:
+    encoding: UTF-8
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: lz
+    password: Lz133322
+    url: jdbc:mysql://rm-2zel16xat9dm18md4to.mysql.rds.aliyuncs.com:3306/course_selection_system?serverTimezone=UTC&useUnicode=true&characterEncoding=UTF-8
+    http:
+      encoding:
+        charset: UTF-8
+        force: true
+        enabled: true
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  application:
+    name: CourseSelectionSystem
+
+  web:
+    resources:
+      static-locations: classpath:/static/, classpath:/resources/, classpath:/static/, classpath:/public/, classpath:/templates/
+
+mybatis:
+  # 搜索指定包别名
+  typeAliasesPackage: com.xxxy.no1.**.domain
+  # 配置mapper的扫描，找到所有的mapper.xml映射文件
+  mapperLocations: classpath*:mapper/**/*Mapper.xml
+  # 加载全局的配置文件
+  configLocation: classpath:mybatis/mybatis-config.xml

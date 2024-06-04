@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxxy.no1.courseselectionsystem.mapper.GradesMapper">
+    
+    <resultMap type="Grades" id="GradesResult">
+        <result property="gradeId"    column="grade_id"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="courseId"    column="course_id"    />
+        <result property="semesterId"    column="semester_id"    />
+        <result property="finalGrade"    column="final_grade"    />
+    </resultMap>
+
+    <sql id="selectGradesVo">
+        select grade_id, student_id, course_id, semester_id, final_grade from grades
+    </sql>
+
+    <select id="selectGradesList" parameterType="Grades" resultMap="GradesResult">
+        <include refid="selectGradesVo"/>
+        <where>  
+            <if test="gradeId != null  and gradeId != ''"> and grade_id = #{gradeId}</if>
+            <if test="studentId != null "> and student_id = #{studentId}</if>
+            <if test="courseId != null "> and course_id = #{courseId}</if>
+            <if test="semesterId != null "> and semester_id = #{semesterId}</if>
+            <if test="finalGrade != null "> and final_grade = #{finalGrade}</if>
+        </where>
+    </select>
+    
+    <select id="selectGradesByGradeId" parameterType="String" resultMap="GradesResult">
+        <include refid="selectGradesVo"/>
+        where grade_id = #{gradeId}
+    </select>
+        
+    <insert id="insertGrades" parameterType="Grades">
+        insert into grades
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="gradeId != null">grade_id,</if>
+            <if test="studentId != null">student_id,</if>
+            <if test="courseId != null">course_id,</if>
+            <if test="semesterId != null">semester_id,</if>
+            <if test="finalGrade != null">final_grade,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="gradeId != null">#{gradeId},</if>
+            <if test="studentId != null">#{studentId},</if>
+            <if test="courseId != null">#{courseId},</if>
+            <if test="semesterId != null">#{semesterId},</if>
+            <if test="finalGrade != null">#{finalGrade},</if>
+         </trim>
+    </insert>
+
+    <update id="updateGrades" parameterType="Grades">
+        update grades
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentId != null">student_id = #{studentId},</if>
+            <if test="courseId != null">course_id = #{courseId},</if>
+            <if test="semesterId != null">semester_id = #{semesterId},</if>
+            <if test="finalGrade != null">final_grade = #{finalGrade},</if>
+        </trim>
+        where grade_id = #{gradeId}
+    </update>
+
+    <delete id="deleteGradesByGradeId" parameterType="String">
+        delete from grades where grade_id = #{gradeId}
+    </delete>
+
+    <delete id="deleteGradesByGradeIds" parameterType="String">
+        delete from grades where grade_id in 
+        <foreach item="gradeId" collection="array" open="(" separator="," close=")">
+            #{gradeId}
+        </foreach>
+    </delete>
+</mapper>

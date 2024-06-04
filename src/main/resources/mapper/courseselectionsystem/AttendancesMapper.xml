@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxxy.no1.courseselectionsystem.mapper.AttendancesMapper">
+    
+    <resultMap type="Attendances" id="AttendancesResult">
+        <result property="attendanceId"    column="attendance_id"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="courseId"    column="course_id"    />
+        <result property="attendanceDate"    column="attendance_date"    />
+        <result property="attendanceStatus"    column="attendance_status"    />
+    </resultMap>
+
+    <sql id="selectAttendancesVo">
+        select attendance_id, student_id, course_id, attendance_date, attendance_status from attendances
+    </sql>
+
+    <select id="selectAttendancesList" parameterType="Attendances" resultMap="AttendancesResult">
+        <include refid="selectAttendancesVo"/>
+        <where>  
+            <if test="studentId != null "> and student_id = #{studentId}</if>
+            <if test="courseId != null "> and course_id = #{courseId}</if>
+            <if test="attendanceDate != null "> and attendance_date = #{attendanceDate}</if>
+            <if test="attendanceStatus != null  and attendanceStatus != ''"> and attendance_status = #{attendanceStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectAttendancesByAttendanceId" parameterType="Integer" resultMap="AttendancesResult">
+        <include refid="selectAttendancesVo"/>
+        where attendance_id = #{attendanceId}
+    </select>
+        
+    <insert id="insertAttendances" parameterType="Attendances" useGeneratedKeys="true" keyProperty="attendanceId">
+        insert into attendances
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">student_id,</if>
+            <if test="courseId != null">course_id,</if>
+            <if test="attendanceDate != null">attendance_date,</if>
+            <if test="attendanceStatus != null">attendance_status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">#{studentId},</if>
+            <if test="courseId != null">#{courseId},</if>
+            <if test="attendanceDate != null">#{attendanceDate},</if>
+            <if test="attendanceStatus != null">#{attendanceStatus},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAttendances" parameterType="Attendances">
+        update attendances
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentId != null">student_id = #{studentId},</if>
+            <if test="courseId != null">course_id = #{courseId},</if>
+            <if test="attendanceDate != null">attendance_date = #{attendanceDate},</if>
+            <if test="attendanceStatus != null">attendance_status = #{attendanceStatus},</if>
+        </trim>
+        where attendance_id = #{attendanceId}
+    </update>
+
+    <delete id="deleteAttendancesByAttendanceId" parameterType="Integer">
+        delete from attendances where attendance_id = #{attendanceId}
+    </delete>
+
+    <delete id="deleteAttendancesByAttendanceIds" parameterType="String">
+        delete from attendances where attendance_id in 
+        <foreach item="attendanceId" collection="array" open="(" separator="," close=")">
+            #{attendanceId}
+        </foreach>
+    </delete>
+</mapper>

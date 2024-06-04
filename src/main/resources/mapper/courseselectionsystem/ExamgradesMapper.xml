@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxxy.no1.courseselectionsystem.mapper.ExamgradesMapper">
+    
+    <resultMap type="Examgrades" id="ExamgradesResult">
+        <result property="examGradeId"    column="exam_grade_id"    />
+        <result property="studentId"    column="student_id"    />
+        <result property="examId"    column="exam_id"    />
+        <result property="score"    column="score"    />
+    </resultMap>
+
+    <sql id="selectExamgradesVo">
+        select exam_grade_id, student_id, exam_id, score from examgrades
+    </sql>
+
+    <select id="selectExamgradesList" parameterType="Examgrades" resultMap="ExamgradesResult">
+        <include refid="selectExamgradesVo"/>
+        <where>  
+            <if test="studentId != null "> and student_id = #{studentId}</if>
+            <if test="examId != null "> and exam_id = #{examId}</if>
+            <if test="score != null "> and score = #{score}</if>
+        </where>
+    </select>
+    
+    <select id="selectExamgradesByExamGradeId" parameterType="Integer" resultMap="ExamgradesResult">
+        <include refid="selectExamgradesVo"/>
+        where exam_grade_id = #{examGradeId}
+    </select>
+        
+    <insert id="insertExamgrades" parameterType="Examgrades" useGeneratedKeys="true" keyProperty="examGradeId">
+        insert into examgrades
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">student_id,</if>
+            <if test="examId != null">exam_id,</if>
+            <if test="score != null">score,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="studentId != null">#{studentId},</if>
+            <if test="examId != null">#{examId},</if>
+            <if test="score != null">#{score},</if>
+         </trim>
+    </insert>
+
+    <update id="updateExamgrades" parameterType="Examgrades">
+        update examgrades
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="studentId != null">student_id = #{studentId},</if>
+            <if test="examId != null">exam_id = #{examId},</if>
+            <if test="score != null">score = #{score},</if>
+        </trim>
+        where exam_grade_id = #{examGradeId}
+    </update>
+
+    <delete id="deleteExamgradesByExamGradeId" parameterType="Integer">
+        delete from examgrades where exam_grade_id = #{examGradeId}
+    </delete>
+
+    <delete id="deleteExamgradesByExamGradeIds" parameterType="String">
+        delete from examgrades where exam_grade_id in 
+        <foreach item="examGradeId" collection="array" open="(" separator="," close=")">
+            #{examGradeId}
+        </foreach>
+    </delete>
+</mapper>

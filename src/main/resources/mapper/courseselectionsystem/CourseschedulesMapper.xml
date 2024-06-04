@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xxxy.no1.courseselectionsystem.mapper.CourseschedulesMapper">
+    
+    <resultMap type="Courseschedules" id="CourseschedulesResult">
+        <result property="scheduleId"    column="schedule_id"    />
+        <result property="courseId"    column="course_id"    />
+        <result property="dayOfWeek"    column="day_of_week"    />
+        <result property="startTime"    column="start_time"    />
+        <result property="endTime"    column="end_time"    />
+        <result property="classroom"    column="classroom"    />
+    </resultMap>
+
+    <sql id="selectCourseschedulesVo">
+        select schedule_id, course_id, day_of_week, start_time, end_time, classroom from courseschedules
+    </sql>
+
+    <select id="selectCourseschedulesList" parameterType="Courseschedules" resultMap="CourseschedulesResult">
+        <include refid="selectCourseschedulesVo"/>
+        <where>  
+            <if test="courseId != null "> and course_id = #{courseId}</if>
+            <if test="dayOfWeek != null  and dayOfWeek != ''"> and day_of_week = #{dayOfWeek}</if>
+            <if test="startTime != null "> and start_time = #{startTime}</if>
+            <if test="endTime != null "> and end_time = #{endTime}</if>
+            <if test="classroom != null  and classroom != ''"> and classroom = #{classroom}</if>
+        </where>
+    </select>
+    
+    <select id="selectCourseschedulesByScheduleId" parameterType="Integer" resultMap="CourseschedulesResult">
+        <include refid="selectCourseschedulesVo"/>
+        where schedule_id = #{scheduleId}
+    </select>
+        
+    <insert id="insertCourseschedules" parameterType="Courseschedules" useGeneratedKeys="true" keyProperty="scheduleId">
+        insert into courseschedules
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="courseId != null">course_id,</if>
+            <if test="dayOfWeek != null">day_of_week,</if>
+            <if test="startTime != null">start_time,</if>
+            <if test="endTime != null">end_time,</if>
+            <if test="classroom != null">classroom,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="courseId != null">#{courseId},</if>
+            <if test="dayOfWeek != null">#{dayOfWeek},</if>
+            <if test="startTime != null">#{startTime},</if>
+            <if test="endTime != null">#{endTime},</if>
+            <if test="classroom != null">#{classroom},</if>
+         </trim>
+    </insert>
+
+    <update id="updateCourseschedules" parameterType="Courseschedules">
+        update courseschedules
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="courseId != null">course_id = #{courseId},</if>
+            <if test="dayOfWeek != null">day_of_week = #{dayOfWeek},</if>
+            <if test="startTime != null">start_time = #{startTime},</if>
+            <if test="endTime != null">end_time = #{endTime},</if>
+            <if test="classroom != null">classroom = #{classroom},</if>
+        </trim>
+        where schedule_id = #{scheduleId}
+    </update>
+
+    <delete id="deleteCourseschedulesByScheduleId" parameterType="Integer">
+        delete from courseschedules where schedule_id = #{scheduleId}
+    </delete>
+
+    <delete id="deleteCourseschedulesByScheduleIds" parameterType="String">
+        delete from courseschedules where schedule_id in 
+        <foreach item="scheduleId" collection="array" open="(" separator="," close=")">
+            #{scheduleId}
+        </foreach>
+    </delete>
+</mapper>
